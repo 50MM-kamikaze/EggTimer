@@ -1,27 +1,175 @@
-![App Brewery Banner](Documentation/AppBreweryBanner.png)
+# Intro 
+---
+-  setup skeleton project 
+- swift IF / ELSE statement 
+- swift switch statements 
+- Dictionaries 
+- Optionals 
+- create a UI projectView to keep track of time 
+- How to debug the app 
+# step 1 
+---
+- link Soft , medium , hard buttons to the IBAction in UI Kit 
+# step 2 
+---
+- use either if else or switch statements as shown below, below used switch statements 
+```swift 
+import UIKit
 
-# Egg Timer
+class ViewController: UIViewController {
+    let softTime = 5
+    let mediumTime = 7
+    let hardTime = 12
+    
+    @IBAction func hardnessSelected(_ sender: UIButton) {
+        
+        let hardness = sender.currentTitle
+        switch hardness {
+        case "Soft":
+            print(softTime)
+        case "Medium":
+            print(mediumTime)
+        case "Hard":
+            print(hardTime)
+        default:
+            print("Error")
+        }   
+    }
+}
 
-## Our Goal
+```
+# step 3 
+--- 
+- another method to do the same thing using dictionary 
+```swift 
+import UIKit
 
-This module will be a mix of tutorials and challenges. Most importantly, we want you to get comfortable with looking up how to do something you've never done before. In certain places of this module, you’ll need to follow the 5 step process you learnt in the Xylophone module and use Google search, StackOverflow and Apple Documentation to make your code do what you want it to. But there are also other parts where we’ll take you step-by-step through new Swift programming concepts. 
+class ViewController: UIViewController {
+    let eggTimes = ["Soft" : 5 , "Medium" : 7 ,"Hard" : 12]
+    
+    @IBAction func hardnessSelected(_ sender: UIButton) {
+        
+        let hardness = sender.currentTitle
+        switch hardness {
+        case "Soft":
+            print(eggTimes["Soft"]!)
+        case "Medium":
+            print(eggTimes["Medium"]!)
+        case "Hard":
+            print(eggTimes["Hard"]!) // ! operator is used cause we know
+        default:
+            print("Error")
+        }
+        
+        
+    }
+    
 
-## What You'll Make
+}
 
-You’ll be building a beautiful egg timer app to boil your eggs to perfection depending on how you prefer your eggs. 
+```
+or 
+```swift 
+import UIKit
 
-## What you will learn
+class ViewController: UIViewController {
+    let eggTimes = ["Soft" : 300 , "Medium" : 420 ,"Hard" : 720]
+    var secondsRemaining = 60
+    
+    @IBAction func hardnessSelected(_ sender: UIButton) {
+        
+        // let hardness = sender.currentTitle // current title is optional , we need to convert it to non optional dataType like shown below
+        let hardness = sender.currentTitle!
+        print(eggTimes[hardness])// when printed , we will get optional , because, thats how dictionaries are worked in swift
+        print(eggTimes[hardness]!) // even this gives a normal integer , not optional
+        let result = eggTimes[hardness]!
+        print(result) // gives as normal integer, not with optional
+        
+        }
+}
 
-* Swift Collection types - Dictionaries
-* The Swift Timer API
-* Conditional statements - IF/ELSE
-* Conditional statements - Switch
-* Functions with outputs
-* How to use the ProgressView
+```
+# step 4 
+---
+- shows the countdown of second when pressed 
+```swift 
+import UIKit
 
+class ViewController: UIViewController {
+    let eggTimes = ["Soft" : 300 , "Medium" : 420 ,"Hard" : 720]
+    var secondsRemaining = 60
+    
+    @IBAction func hardnessSelected(_ sender: UIButton) {
+        let hardness = sender.currentTitle!
+        secondsRemaining = eggTimes[hardness]!
+        Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateCounter), userInfo: nil, repeats: true)
+        }
+    @objc func updateCounter() {
+        //example functionality
+        if secondsRemaining > 0 {
+            print("\(secondsRemaining) Seconds left.")
+            secondsRemaining -= 1
+        }
+    }
 
+}
+```
+- but the problem in the above code is , we are calling the function multiple times when we are typing the button, we need to restart the timer when the function restarts 
+```swift 
+import UIKit
 
->This is a companion project to The App Brewery's Complete App Development Bootcamp, check out the full course at [www.appbrewery.co](https://www.appbrewery.co/)
+class ViewController: UIViewController {
+    let eggTimes = ["Soft" : 300 , "Medium" : 420 ,"Hard" : 720]
+    var secondsRemaining = 60
+    var timer = Timer() // new
+    @IBAction func hardnessSelected(_ sender: UIButton) {
+        timer.invalidate() //new , will make a new timer after collapsing the previous when the button is pressed again for new hardness
+        let hardness = sender.currentTitle!
+        secondsRemaining = eggTimes[hardness]!
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateCounter), userInfo: nil, repeats: true) //new
+        } 
+    @objc func updateCounter() {
+        //example functionality
+        if secondsRemaining > 0 {
+            print("\(secondsRemaining) Seconds left.")
+            secondsRemaining -= 1
+        }
+    }
 
-![End Banner](Documentation/readme-end-banner.png)
+}
 
+```
+- To make the titleLabel change to Done! 
+```swift 
+import UIKit
+
+class ViewController: UIViewController {
+    let eggTimes = ["Soft" : 10 , "Medium" : 1 ,"Hard" : 1]
+    var secondsRemaining = 60
+    var timer = Timer()
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBAction func hardnessSelected(_ sender: UIButton) {
+        timer.invalidate()
+        let hardness = sender.currentTitle!
+        secondsRemaining = eggTimes[hardness]!
+        timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateCounter), userInfo: nil, repeats: true)
+
+        }
+    @objc func updateCounter() {
+        //example functionality
+        if secondsRemaining > 0 {
+            print("\(secondsRemaining) Seconds left.")
+            secondsRemaining -= 1
+        } else {
+            timer.invalidate()
+            titleLabel.text = "Done!" // so here we will get secondsRemaining = 0 , then we need to change the label, so we will end the timer first then make the label change to "Done!"
+        }
+    }
+
+}
+
+```
+# step 5 
+---
+- Make the progress view
+- UIProgressView
